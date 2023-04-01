@@ -1,21 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define Max_Size 100
+#define Max_Size 1
+#define STACK_OVERFLOW  -100
+#define STACK_UNDERFLOW -101
+#define OUT_OF_MEMORY   -102
+typedef int elem;
 
 struct stack
 {
-    int elem[Max_Size];
+    elem *data;
+    int size;
     int top;
 };
 
-void init(struct stack * stk) {
-    stk->top = 0;
+
+struct stack* createStack() {
+    struct stack *out = NULL;
+    out = malloc(sizeof(struct stack));
+    if (out == NULL) {
+        exit(OUT_OF_MEMORY);
+    }
+    out->size = Max_Size;
+    out->data = malloc(out->size * sizeof(elem));
+    if (out->data == NULL) {
+        free(out);
+        exit(OUT_OF_MEMORY);
+    }
+    out->top = 0;
+    return out;
 }
 
-void push(struct stack * stk, int f) {
-        stk->elem[stk->top] = f;
-        stk->top++;
+void resize(struct stack *stack) {
+    stack->size += 1;
+    stack->data = realloc(stack->data, stack->size * sizeof(elem));
+    if (stack->data == NULL) {
+        exit(STACK_OVERFLOW);
+    }
+}
+
+void push(struct stack *stack, elem value) {
+    if (stack->top >= stack->size) {
+        resize(stack);
+    }
+    stack->data[stack->top] = value;
+    stack->top++;
+}
+
+void init(struct stack * stk) {
+    stk->top = 0;
 }
 
 int getcount(struct stack *stk) {
@@ -37,7 +70,7 @@ void print(struct stack *stk) {
     }
     while(i > 0) {
         i--;
-        printf("%d\n", stk->elem[i]);
+        printf("%d\n", stk->data[i]);
     }
 }
 
@@ -45,7 +78,7 @@ int pop(struct stack *stk) {
     int elem;
     if(stk->top > 0) {
         stk->top--;
-        elem = stk->elem[stk->top];
+        elem = stk->data[stk->top];
         return elem;
     }
 }
@@ -53,11 +86,11 @@ int pop(struct stack *stk) {
 void sort(int* s_arr, int first, int last)
 {
     int i = first, j = last, x = s_arr[(first + last) / 2];
-  
+
     do {
         while (s_arr[i] < x) i++;
         while (s_arr[j] > x) j--;
-  
+
         if(i <= j) {
             if (s_arr[i] > s_arr[j]) {
                 int s_arr1 = s_arr[i];
@@ -68,7 +101,7 @@ void sort(int* s_arr, int first, int last)
             j--;
         }
     } while (i <= j);
-  
+
     if (i < last)
         sort(s_arr, i, last);
     if (first < j)
