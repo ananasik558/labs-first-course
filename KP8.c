@@ -13,19 +13,17 @@ typedef struct list{
     en key;
     struct list *next;
     struct list *prev;
-    struct list *head;
 } list;
 
-list *init (en value) {
+list* InIt (en value) {
     list * lst = (list* )malloc(sizeof(list));
     lst->key = value;
     lst->next = NULL;
     lst->prev = NULL;
-    lst->head = lst;
     return lst;
 }
 
-list *Add(list *lst, en value, int place) {
+list* Add(list* lst, en value, int place) {
     int count = 0;
     while(count != place) {
         if(lst->next != NULL) {
@@ -48,7 +46,7 @@ list *Add(list *lst, en value, int place) {
     }
 }
 
-int size(list *lst) {
+int Size(list* lst) {
     int count = 0;
     while(lst != NULL) {
         count++;
@@ -57,8 +55,8 @@ int size(list *lst) {
     return count;
 }
 
-void *delete(list *lst, int place) {
-    if(place <= size(lst)) {
+void* Delete(list* lst, int place) {
+    if(place <= Size(lst)) {
         int number = 1;
         while(number != place) {
             if(lst != NULL) {
@@ -78,7 +76,7 @@ void *delete(list *lst, int place) {
     return lst;
 }
 
-void *print(list *lst) {
+void* Print(list* lst) {
 
     while(lst->prev != NULL) {
         lst = lst->prev;
@@ -111,10 +109,7 @@ void *print(list *lst) {
     return lst;
 }
 
-list *task(list *lst, int k) {
-    if(k > size(lst)) {
-        printf("You are wrong");
-    } else {
+list* Task(list* lst, int k) {
         en elem;
         while(lst->next != NULL) {
             lst = lst->next;
@@ -132,23 +127,22 @@ list *task(list *lst, int k) {
             lst->prev = tmp;
             lst = lst->prev;
         }
-    }
     return lst;
 }
 
 int main() {
     int k;
-    list *lst = init(RED);
+    list *lst = InIt(RED);
     Add(lst, BLUE, 1);
     Add(lst, BLACK, 2);
     Add(lst, YELLOW, 3);
     Add(lst, WHITE, 3);
-    print(lst);
-    delete(lst, 2);
-    print(lst);
+    Print(lst);
+    Delete(lst, 2);
+    Print(lst);
     printf("Write k\n");
     scanf("%d", &k);
-    task(lst, 2);
-    print(lst);
+    Task(lst, k);
+    Print(lst);
     return 0;
 }
