@@ -34,7 +34,7 @@ list* Add(list* lst, en value, int place) {
         }
     }
     list *tmp, *link;
-    tmp = (list *)malloc(sizeof(list *));
+    tmp = (list *)malloc(sizeof(list));
     link = lst->next;
     lst->next = tmp;
     tmp->key = value;
@@ -120,7 +120,7 @@ list* Task(list* lst, int k) {
         }
         for(int i = 0; i < k; i++) {
             list *tmp;
-            tmp = (list *)malloc(sizeof(list *));
+            tmp = (list *)malloc(sizeof(list));
             tmp->next = lst;
             tmp->prev = NULL;
             tmp->key = elem;
