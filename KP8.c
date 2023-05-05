@@ -1,148 +1,92 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-typedef enum {
-    RED,
-    BLUE,
-    YELLOW,
-    BLACK,
-    WHITE
-} en;
-
-typedef struct list{
-    en key;
-    struct list *next;
-    struct list *prev;
-} list;
-
-list* InIt (en value) {
-    list * lst = (list* )malloc(sizeof(list));
-    lst->key = value;
-    lst->next = NULL;
-    lst->prev = NULL;
-    return lst;
-}
-
-list* Add(list* lst, en value, int place) {
-    int count = 0;
-    while(count != place) {
-        if(lst->next != NULL) {
-            lst = lst->next;
-            count++;
-        } else {
-            break;
-        }
-    }
-    list *tmp, *link;
-    tmp = (list *)malloc(sizeof(list));
-    link = lst->next;
-    lst->next = tmp;
-    tmp->key = value;
-    tmp->next = link;
-    tmp->prev = lst;
-    if(link != NULL) {
-        link->prev = tmp;
-        return tmp;
+void PrintTable(int mas[][2], int n) {
+    for(int i = 0; i < n; i++) {
+        printf("%d %d\n", mas[i][0], mas[i][1]);
     }
 }
 
-int Size(list* lst) {
-    int count = 0;
-    while(lst != NULL) {
-        count++;
-        lst = lst->next;
+void QuickSort(int mas[][2], int first, int last) {
+    int key, value;
+    int i = first;
+    int j = last;
+    key = mas[first][0];
+    value = mas[first][1];
+    while (first < last) {
+        while ((mas[last][0] >= key) && (first < last)) {
+            --last;
+        }
+        if (first != last) {
+            mas[first][0] = mas[last][0];
+            mas[first][1] = mas[last][1];
+            ++first;
+        }
+        while ((mas[first][0] <= key) && (first < last)) {
+            ++first;
+        }
+        if (first != last) {
+            mas[last][0] = mas[first][0];
+            mas[last][1] = mas[first][1];
+            --last;
+        }
     }
-    return count;
+    mas[first][0] = key;
+    mas[first][1] = value;
+    key = first;
+    if (i < key) {
+        QuickSort(mas, i, key - 1);
+    }
+    if (j > key) {
+        QuickSort(mas, key + 1, j);
+    }
 }
 
-void* Delete(list* lst, int place) {
-    if(place <= Size(lst)) {
-        int number = 1;
-        while(number != place) {
-            if(lst != NULL) {
-                lst = lst->next;
-                number++;
-            } else {
-                break;
-            }
+void BinSearch(int mas[][2], int n, int key) {
+    int first = 0;
+    int last = n - 1;
+    while(first <= last) {
+        int mid = (first + last) / 2;
+        if(mas[mid][0] == key) {
+            printf("Значение %d\n", mas[mid][1]);
+            return;
+        }
+        if(mas[mid][0] > key) {
+            last = mid;
+        }
+        if(mas[mid][0] < key) {
+            first = mid;
         }
     }
-    list *linkNext, *lintPrev;
-    linkNext = lst->next;
-    lintPrev = lst->prev;
-    if (lst->prev != NULL) lst->prev->next = linkNext;
-    if (lst->next != NULL) lst->next->prev = lintPrev;
-    free(lst);
-    return lst;
-}
-
-void* Print(list* lst) {
-
-    while(lst->prev != NULL) {
-        lst = lst->prev;
-    }
-    while(lst != NULL) {
-        switch (lst->key) {
-            case BLUE:
-            printf("blue ");
-            break;
-
-            case YELLOW:
-            printf("yellow ");
-            break;
-
-            case BLACK:
-            printf("black ");
-            break;
-
-            case WHITE:
-            printf("white ");
-            break;
-            
-            case RED:
-            printf("red ");
-            break;
-        }
-        lst = lst->next;
-    }
-    printf("\n");
-    return lst;
-}
-
-list* Task(list* lst, int k) {
-        en elem;
-        while(lst->next != NULL) {
-            lst = lst->next;
-        }
-        elem = lst->key;
-        while(lst->prev != NULL) {
-            lst = lst->prev;
-        }
-        for(int i = 0; i < k; i++) {
-            list *tmp;
-            tmp = (list *)malloc(sizeof(list));
-            tmp->next = lst;
-            tmp->prev = NULL;
-            tmp->key = elem;
-            lst->prev = tmp;
-            lst = lst->prev;
-        }
-    return lst;
 }
 
 int main() {
-    int k;
-    list *lst = InIt(RED);
-    Add(lst, BLUE, 1);
-    Add(lst, BLACK, 2);
-    Add(lst, YELLOW, 3);
-    Add(lst, WHITE, 3);
-    Print(lst);
-    Delete(lst, 2);
-    Print(lst);
-    printf("Write k\n");
-    scanf("%d", &k);
-    Task(lst, k);
-    Print(lst);
+    printf("Введите количество элементов\n");
+    int n;
+    scanf("%d", &n);
+    int mas[n][2];
+    printf("Введите ключ и элемент через пробел\n");
+    for(int i = 0; i < n; i++) {
+        scanf("%d %d", &mas[i][0], &mas[i][1]);
+    }
+    printf("\n");
+    PrintTable(mas, n);
+    QuickSort(mas, 0, n - 1);
+    printf("\n");
+    PrintTable(mas, n);
+    printf("\n");
+    int flag = 1;
+    while(flag) {
+        int key, var;
+        printf("1. Найти ключ  2. Выход\n");
+        scanf("%d", &var);
+        if(var == 1) {
+            printf("Введите ключ\n");
+            scanf("%d", &key);
+            BinSearch(mas, n, key);
+        }
+        if(var == 2) {
+            flag = 0;
+        }
+    }
     return 0;
 }
